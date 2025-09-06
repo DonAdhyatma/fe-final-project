@@ -147,7 +147,7 @@ const LoginForm = () => {
               </label>
             </div>
 
-            <button type="button" className="text-sm text-blue-600 hover:text-blue-500" onClick={() => router.push("/reset-password")}>
+            <button type="button" className="text-sm text-blue-600 hover:text-blue-500 cursor-pointer" onClick={() => router.push("/reset-password")}>
               Lupa password?
             </button>
           </div>
@@ -169,7 +169,7 @@ const LoginForm = () => {
         </div>
 
         {/* Demo Accounts Info */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+        {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <p className="text-xs text-gray-600 text-center mb-2 font-medium">Demo Accounts:</p>
           <div className="text-xs text-gray-500 space-y-1">
             <div className="flex justify-between">
@@ -181,7 +181,7 @@ const LoginForm = () => {
               <span>cashier@pos.com / cashier123</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
