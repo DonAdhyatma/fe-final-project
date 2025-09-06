@@ -93,7 +93,11 @@ const SidebarLeft = () => {
       <nav className="flex-1 p-4 space-y-2">
         {/* Collapse Toggle Button - di atas navigation items */}
         <div className="flex justify-center mb-4 pb-2">
-          <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}>
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)} 
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" 
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
             <svg className={clsx("h-5 w-5 text-gray-500 transition-transform duration-200", isCollapsed ? "rotate-180" : "")} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
@@ -106,7 +110,11 @@ const SidebarLeft = () => {
             <button
               key={item.name}
               onClick={() => router.push(item.href)}
-              className={clsx("w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors", isActive ? "bg-blue-100 text-blue-700" : "text-gray-700 hover:bg-gray-100", isCollapsed ? "justify-center" : "")}
+              className={clsx(
+                "w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer", 
+                isActive ? "bg-blue-100 text-blue-700" : "text-gray-700 hover:bg-gray-100 hover:text-gray-900", 
+                isCollapsed ? "justify-center" : ""
+              )}
               title={isCollapsed ? item.name : ""}
             >
               <span className={clsx("flex-shrink-0", isActive ? "text-blue-700" : "text-gray-500")}>{item.icon}</span>
