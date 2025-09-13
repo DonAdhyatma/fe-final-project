@@ -2,13 +2,35 @@
 
 import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../../components/layout/DashboardLayout";
 import Button from "../../../components/ui/Button";
+import MenuDetailModal from "../../../components/pos/MenuDetailModal";
 
 export default function CashierPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const [selectedMenuItem, setSelectedMenuItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Sample menu data
+  const menuItems = Array.from({ length: 12 }, (_, i) => ({
+    id: i + 1,
+    name: `Menu Item ${i + 1}`,
+    description: 'Vegetables, egg, tempe, tofu, ketupat, peanut sauce, and kerupuk.',
+    price: 'Rp 25.000',
+    category: 'Food'
+  }));
+
+  const handleOpenModal = (menuItem) => {
+    setSelectedMenuItem(menuItem);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMenuItem(null);
+  };
 
   // Redirect if not authenticated or not cashier/admin
   useEffect(() => {
@@ -94,23 +116,26 @@ export default function CashierPage() {
 
             {/* Menu Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-[calc(100vh-360px)]">
-              {/* Placeholder Menu Items */}
-              {Array.from({ length: 12 }, (_, i) => (
+              {/* Menu Items */}
+              {menuItems.map((item) => (
                 <div
-                  key={i}
+                  key={item.id}
+                  onClick={() => {
+                    // Handle add to cart when clicking on card
+                    console.log('Add to cart:', item);
+                  }}
                   className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group relative"
                 >
                   <div className="bg-gray-200 h-24 rounded mb-3 group-hover:bg-gray-300 transition-colors"></div>
-                  <h3 className="font-medium text-sm mb-1 text-gray-900">Menu Item {i + 1}</h3>
-                  <p className="text-blue-600 font-semibold text-sm">Rp 25.000</p>
-                  <p className="text-gray-500 text-xs mt-1">Kategori: Food</p>
+                  <h3 className="font-medium text-sm mb-1 text-gray-900">{item.name}</h3>
+                  <p className="text-gray-500 text-xs mt-1 mb-2">{item.description}</p>
+                  <p className="text-blue-600 font-semibold text-sm">{item.price}</p>
                   
                   {/* Detail Menu Button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Handle popup detail menu
-                      alert(`Detail menu untuk Menu Item ${i + 1}`);
+                      handleOpenModal(item);
                     }}
                     className="absolute bottom-2 right-2 p-2 text-gray-900 hover:text-blue-600 hover:border-blue-500 border border-gray-300 rounded-md transition-colors cursor-pointer bg-white hover:bg-blue-50"
                     title="Detail Menu"
@@ -257,6 +282,13 @@ export default function CashierPage() {
           </div>
         </div>
       </div>
+
+      {/* Menu Detail Modal */}
+      <MenuDetailModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        menuItem={selectedMenuItem}
+      />
     </DashboardLayout>
   );
 }

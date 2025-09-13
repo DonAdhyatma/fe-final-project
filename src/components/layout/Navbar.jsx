@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import Button from "../ui/Button";
@@ -10,6 +10,21 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { user, logout } = useAuth();
   const router = useRouter();
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -40,7 +55,7 @@ const Navbar = () => {
                   placeholder="Search menu items..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                 />
               </div>
             </form>
@@ -48,37 +63,51 @@ const Navbar = () => {
 
           {/* User Profile */}
           <div className="flex items-center space-x-4">
-            <div className="relative">
-              <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="flex items-center space-x-3 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 p-2">
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)} 
+                className="flex items-center space-x-3 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 cursor-pointer hover:bg-gray-50 transition-colors duration-200 select-none"
+                aria-haspopup="true"
+                aria-expanded={isProfileOpen}
+              >
                 {/* Profile Image */}
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">{user?.username?.charAt(0)?.toUpperCase() || "U"}</span>
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center transition-colors duration-200 hover:bg-blue-700">
+                  <span className="text-white font-medium text-sm pointer-events-none">
+                    {user?.username?.charAt(0)?.toUpperCase() || "U"}
+                  </span>
                 </div>
 
                 {/* User Info */}
-                <div className="text-left">
+                <div className="text-left pointer-events-none">
                   <p className="text-gray-900 font-medium">{user?.username || "User"}</p>
                   <p className="text-gray-500 text-xs capitalize">{user?.role || "Role"}</p>
                 </div>
 
-                {/* Dropdown Arrow */}
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {/* Dropdown Arrow with smooth rotation */}
+                <svg 
+                  className={`h-5 w-5 text-gray-400 transition-transform duration-200 pointer-events-none ${
+                    isProfileOpen ? 'transform rotate-180' : ''
+                  }`} 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown Menu with smooth animation */}
               {isProfileOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 animate-in slide-in-from-top-2 duration-200">
                   <div className="py-1">
                     <button
                       onClick={() => {
                         setIsProfileOpen(false);
                         router.push(user?.role === "admin" ? "/admin/settings" : "/cashier/settings");
                       }}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition-colors duration-150"
                     >
-                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="h-4 w-4 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -97,9 +126,9 @@ const Navbar = () => {
                         setIsProfileOpen(false);
                         handleLogout();
                       }}
-                      className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 cursor-pointer transition-colors duration-150"
                     >
-                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="h-4 w-4 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
                       Exit
